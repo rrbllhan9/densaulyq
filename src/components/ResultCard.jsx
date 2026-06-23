@@ -1,9 +1,9 @@
 import styles from './ResultCard.module.css'
 
 const SEVERITY_LABELS = {
-  low: { label: 'Низкая срочность', color: '#10b981', bg: '#d1fae5' },
-  medium: { label: 'Средняя срочность', color: '#f59e0b', bg: '#fef3c7' },
-  high: { label: 'Высокая срочность', color: '#ef4444', bg: '#fee2e2' },
+  low: { label: 'Можно справиться дома', color: 'var(--primary-dark)', bg: 'var(--soft-mint)' },
+  medium: { label: 'Стоит показаться врачу', color: 'var(--primary-dark)', bg: 'var(--soft-blue)' },
+  high: { label: 'Лучше не откладывать визит', color: 'var(--danger-text)', bg: 'var(--soft-sand)' },
 }
 
 export default function ResultCard({ symptom, onShowDoctors }) {
@@ -26,7 +26,7 @@ export default function ResultCard({ symptom, onShowDoctors }) {
       </div>
 
       <section className={styles.section}>
-        <h4 className={styles.sectionTitle}>🩹 Первая помощь</h4>
+        <h4 className={styles.sectionTitle}>🩹 Что можно сделать прямо сейчас</h4>
         <ul className={styles.list}>
           {symptom.firstAid.map((item, i) => (
             <li key={i} className={styles.listItem}>
@@ -38,18 +38,21 @@ export default function ResultCard({ symptom, onShowDoctors }) {
       </section>
 
       <section className={styles.section}>
-        <h4 className={styles.sectionTitle}>👨‍⚕️ Рекомендуемый специалист</h4>
+        <h4 className={styles.sectionTitle}>🤍 Кто может помочь</h4>
         <div className={styles.specialistBox}>
           <span className={styles.specialistName}>{symptom.specialist.name}</span>
           <p className={styles.specialistReason}>{symptom.specialist.reason}</p>
+          <p className={styles.noCallHint}>
+            Записаться можно здесь, <strong>без звонка</strong> — или написать врачу онлайн.
+          </p>
           <button className={styles.findDoctorBtn} onClick={onShowDoctors}>
-            🗺️ Найти врача рядом
+            Подобрать врача рядом →
           </button>
         </div>
       </section>
 
       <section className={styles.section}>
-        <h4 className={styles.sectionTitle}>💊 Лекарства</h4>
+        <h4 className={styles.sectionTitle}>💊 Что может облегчить состояние</h4>
         <div className={styles.medsGrid}>
           {symptom.medications.map((med, i) => (
             <div key={i} className={styles.medCard}>
@@ -70,7 +73,7 @@ export default function ResultCard({ symptom, onShowDoctors }) {
           ))}
         </div>
         <p className={styles.medDisclaimer}>
-          ⚠️ Перед применением лекарств проконсультируйтесь с врачом. Соблюдайте дозировку.
+          Перед приёмом лекарств лучше посоветоваться с врачом — можно онлайн.
         </p>
       </section>
 

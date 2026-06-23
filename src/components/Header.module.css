@@ -1,20 +1,31 @@
 .header {
-  background: var(--surface);
+  background: rgba(255, 255, 255, 0.82);
+  backdrop-filter: blur(12px);
   border-bottom: 1px solid var(--border);
   position: sticky;
   top: 0;
   z-index: 100;
   box-shadow: var(--shadow-sm);
+  animation: headerDrop 0.7s var(--ease-soft) both;
+}
+
+@keyframes headerDrop {
+  from { opacity: 0; transform: translateY(-100%); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.emergency:active {
+  transform: scale(0.95);
 }
 
 .inner {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 0 24px;
-  height: 64px;
+  padding: 0 28px;
+  height: 72px;
   display: flex;
   align-items: center;
-  gap: 24px;
+  gap: 28px;
 }
 
 .logo {
@@ -25,24 +36,44 @@
   flex-shrink: 0;
 }
 
+.logo {
+  cursor: default;
+}
+
 .logoIcon {
   font-size: 28px;
   line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--soft-mint), var(--soft-blue));
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.6), var(--shadow-sm);
+  animation: breathe 6s ease-in-out infinite;
+  transition: transform 0.4s var(--ease-back);
+}
+
+.logo:hover .logoIcon {
+  transform: rotate(-8deg) scale(1.08);
 }
 
 .logoTitle {
   display: block;
-  font-size: 18px;
-  font-weight: 700;
-  color: var(--primary);
+  font-size: 19px;
+  font-weight: 800;
+  color: var(--primary-dark);
   line-height: 1.2;
+  letter-spacing: -0.2px;
 }
 
 .logoSub {
   display: block;
-  font-size: 11px;
+  font-size: 11.5px;
   color: var(--text-muted);
-  line-height: 1;
+  line-height: 1.1;
+  margin-top: 1px;
 }
 
 .nav {
@@ -54,51 +85,72 @@
 .navBtn {
   display: flex;
   align-items: center;
-  gap: 6px;
-  padding: 8px 16px;
+  gap: 7px;
+  padding: 9px 18px;
   border: none;
   background: transparent;
-  border-radius: var(--radius-sm);
-  font-size: 14px;
-  font-weight: 500;
+  border-radius: 999px;
+  font-size: 14.5px;
+  font-weight: 600;
   color: var(--text-muted);
-  transition: all 0.2s;
+  transition: background 0.3s var(--ease-soft), color 0.3s var(--ease-soft),
+    transform 0.2s var(--ease-back), box-shadow 0.3s var(--ease-soft);
+}
+
+.navBtn span {
+  transition: transform 0.3s var(--ease-back);
 }
 
 .navBtn:hover {
-  background: var(--bg);
-  color: var(--primary);
+  background: var(--soft-blue);
+  color: var(--primary-dark);
+}
+
+.navBtn:hover span {
+  transform: scale(1.18);
+}
+
+.navBtn:active {
+  transform: scale(0.95);
 }
 
 .navBtn.active {
-  background: #eff6ff;
-  color: var(--primary);
-  font-weight: 600;
+  background: linear-gradient(135deg, var(--soft-blue), var(--soft-mint));
+  color: var(--primary-dark);
+  font-weight: 700;
+  box-shadow: var(--shadow-sm);
 }
 
 .emergency {
   display: flex;
   align-items: center;
-  gap: 6px;
-  padding: 8px 16px;
-  background: var(--danger);
-  color: white;
-  border-radius: var(--radius-sm);
+  gap: 7px;
+  padding: 9px 16px;
+  background: var(--soft-sand);
+  color: var(--danger-text);
+  border: 1px solid var(--accent-light);
+  border-radius: 999px;
   font-size: 13px;
   font-weight: 700;
   text-decoration: none;
-  transition: background 0.2s;
+  transition: all 0.25s ease;
   flex-shrink: 0;
 }
 
 .emergency:hover {
-  background: #dc2626;
+  background: var(--accent-light);
+  transform: translateY(-1px);
+}
+
+.emergencyIcon {
+  font-size: 14px;
 }
 
 @media (max-width: 600px) {
   .inner {
     padding: 0 16px;
     gap: 12px;
+    height: 64px;
   }
   .logoSub {
     display: none;
@@ -109,5 +161,8 @@
   .emergency {
     padding: 8px 12px;
     font-size: 12px;
+  }
+  .emergencyText {
+    display: none;
   }
 }

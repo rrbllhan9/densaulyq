@@ -15,14 +15,14 @@ L.Icon.Default.mergeOptions({
 })
 
 const userIcon = L.divIcon({
-  html: '<div style="width:16px;height:16px;background:#2563eb;border:3px solid white;border-radius:50%;box-shadow:0 0 0 4px rgba(37,99,235,0.3)"></div>',
+  html: '<div style="width:16px;height:16px;background:#5b8caf;border:3px solid white;border-radius:50%;box-shadow:0 0 0 5px rgba(116,185,164,0.3)"></div>',
   iconSize: [16, 16],
   iconAnchor: [8, 8],
   className: '',
 })
 
 const doctorIcon = L.divIcon({
-  html: '<div style="font-size:24px;line-height:1;filter:drop-shadow(0 2px 4px rgba(0,0,0,0.3))">🏥</div>',
+  html: '<div style="font-size:24px;line-height:1;filter:drop-shadow(0 2px 5px rgba(91,140,175,0.35))">🤍</div>',
   iconSize: [28, 28],
   iconAnchor: [14, 28],
   className: '',
@@ -59,7 +59,7 @@ export default function DoctorMap() {
         setLocating(false)
       },
       () => {
-        setLocError('Не удалось определить местоположение. Показываем всех врачей Алматы.')
+        setLocError('Не удалось определить местоположение — показываем всех врачей Алматы.')
         setLocating(false)
       },
       { timeout: 8000 }
@@ -76,20 +76,24 @@ export default function DoctorMap() {
     <div className={styles.wrapper}>
       <div className={styles.sidebar}>
         <div className={styles.sidebarHeader}>
-          <h2 className={styles.sidebarTitle}>Врачи в Алматы</h2>
+          <h2 className={styles.sidebarTitle}>Врачи рядом</h2>
           <button
             className={styles.locateBtn}
             onClick={locate}
             disabled={locating}
           >
-            {locating ? '⏳ Определяем...' : '📍 Рядом со мной'}
+            {locating ? 'Ищем…' : '📍 Кто ближе'}
           </button>
+        </div>
+
+        <div className={styles.onlineNote}>
+          Все врачи принимают онлайн и записывают без звонка.
         </div>
 
         {locError && <div className={styles.locError}>{locError}</div>}
         {userPos && (
           <div className={styles.locSuccess}>
-            ✅ Местоположение определено. Врачи отсортированы по расстоянию.
+            Готово — показываем, кто ближе к вам.
           </div>
         )}
 
@@ -106,8 +110,7 @@ export default function DoctorMap() {
         </div>
 
         <p className={styles.disclaimer}>
-          ⚠️ Данные о врачах являются демонстрационными. Не является заменой реального
-          поиска медицинских услуг. При экстренных ситуациях звоните <strong>103</strong>.
+          Данные о врачах демонстрационные. Если станет плохо — бесплатный номер <strong>103</strong>.
         </p>
       </div>
 
@@ -127,12 +130,12 @@ export default function DoctorMap() {
             <>
               <FlyTo center={userPos} />
               <Marker position={userPos} icon={userIcon}>
-                <Popup><strong>Вы здесь</strong></Popup>
+                <Popup><strong>Вы здесь 🤍</strong></Popup>
               </Marker>
               <Circle
                 center={userPos}
                 radius={1500}
-                pathOptions={{ color: '#2563eb', fillColor: '#2563eb', fillOpacity: 0.05, weight: 1.5, dashArray: '6,4' }}
+                pathOptions={{ color: '#74b9a4', fillColor: '#74b9a4', fillOpacity: 0.06, weight: 1.5, dashArray: '6,4' }}
               />
             </>
           )}
@@ -140,14 +143,15 @@ export default function DoctorMap() {
           {doctors.map(doc => (
             <Marker key={doc.id} position={[doc.lat, doc.lng]} icon={doctorIcon}>
               <Popup maxWidth={260}>
-                <div style={{ fontFamily: 'Inter, sans-serif' }}>
+                <div style={{ fontFamily: 'Nunito, sans-serif' }}>
                   <strong style={{ fontSize: 14 }}>{doc.name}</strong>
-                  <div style={{ color: '#64748b', fontSize: 12, marginTop: 2 }}>{doc.specialty}</div>
+                  <div style={{ color: '#8b8579', fontSize: 12, marginTop: 2 }}>{doc.specialty}</div>
                   <div style={{ marginTop: 6, fontSize: 13 }}>⭐ {doc.rating} · {doc.reviewCount} отзывов</div>
-                  <div style={{ fontSize: 12, color: '#64748b', marginTop: 4 }}>{doc.address}</div>
-                  <div style={{ fontSize: 13, fontWeight: 600, color: '#2563eb', marginTop: 4 }}>{doc.price}</div>
+                  <div style={{ fontSize: 12, color: '#8b8579', marginTop: 4 }}>{doc.address}</div>
+                  <div style={{ fontSize: 13, fontWeight: 700, color: '#4a7491', marginTop: 4 }}>{doc.price}</div>
+                  <div style={{ fontSize: 12, color: '#74b9a4', fontWeight: 700, marginTop: 4 }}>💬 Принимает онлайн · без звонка</div>
                   {distances[doc.id] != null && (
-                    <div style={{ fontSize: 12, color: '#10b981', marginTop: 4 }}>
+                    <div style={{ fontSize: 12, color: '#74b9a4', marginTop: 4 }}>
                       📍 {distances[doc.id] < 1
                         ? `${Math.round(distances[doc.id] * 1000)} м от вас`
                         : `${distances[doc.id].toFixed(1)} км от вас`}

@@ -1,7 +1,7 @@
 .wrapper {
   display: flex;
   flex-direction: column;
-  height: calc(100vh - 64px);
+  height: 100%;
   max-width: 800px;
   margin: 0 auto;
   padding: 0 16px;
@@ -30,13 +30,14 @@
   width: 36px;
   height: 36px;
   border-radius: 50%;
-  background: linear-gradient(135deg, var(--primary), var(--primary-light));
+  background: linear-gradient(135deg, var(--soft-mint), var(--soft-blue));
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 18px;
   flex-shrink: 0;
-  box-shadow: 0 2px 8px rgba(37,99,235,0.3);
+  box-shadow: var(--shadow-sm);
+  animation: popIn 0.5s var(--ease-back) both;
 }
 
 .bubble {
@@ -51,13 +52,16 @@
 .bot .bubble {
   background: var(--surface);
   color: var(--text);
-  border-radius: 4px var(--radius) var(--radius) var(--radius);
+  border-radius: 6px var(--radius) var(--radius) var(--radius);
+  animation: slideInLeft 0.55s var(--ease-soft) both;
 }
 
 .user .bubble {
-  background: linear-gradient(135deg, var(--primary), var(--primary-light));
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
   color: white;
-  border-radius: var(--radius) 4px var(--radius) var(--radius);
+  border-radius: var(--radius) 6px var(--radius) var(--radius);
+  box-shadow: 0 6px 18px rgba(69,116,143,0.25);
+  animation: slideInRight 0.55s var(--ease-soft) both;
 }
 
 .typing {
@@ -85,27 +89,39 @@
   display: flex;
   gap: 8px;
   flex-wrap: wrap;
+  align-items: center;
   padding: 12px 0 8px;
 }
 
+.suggestLabel {
+  font-size: 13px;
+  color: var(--text-muted);
+  font-weight: 600;
+  margin-right: 2px;
+}
+
 .chip {
-  padding: 6px 14px;
+  padding: 7px 16px;
   background: var(--surface);
   border: 1.5px solid var(--border);
-  border-radius: 20px;
-  font-size: 13px;
-  color: var(--primary);
-  font-weight: 500;
-  transition: all 0.2s;
+  border-radius: 999px;
+  font-size: 13.5px;
+  color: var(--primary-dark);
+  font-weight: 600;
+  transition: all 0.25s ease;
   white-space: nowrap;
 }
 
 .chip:hover {
-  background: var(--primary);
-  border-color: var(--primary);
-  color: white;
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(37,99,235,0.25);
+  background: linear-gradient(135deg, var(--soft-blue), var(--soft-mint));
+  border-color: var(--secondary-light);
+  color: var(--primary-dark);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow);
+}
+
+.chip:active {
+  transform: translateY(0) scale(0.96);
 }
 
 .inputRow {
@@ -130,8 +146,8 @@
 }
 
 .input:focus {
-  border-color: var(--primary);
-  box-shadow: 0 0 0 3px rgba(37,99,235,0.1);
+  border-color: var(--secondary);
+  box-shadow: 0 0 0 4px var(--soft-mint);
 }
 
 .input::placeholder {
@@ -139,24 +155,28 @@
 }
 
 .sendBtn {
-  width: 52px;
-  height: 52px;
+  width: 54px;
+  height: 54px;
   border-radius: 50%;
-  background: linear-gradient(135deg, var(--primary), var(--primary-light));
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
   color: white;
   border: none;
   font-size: 20px;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.2s;
-  box-shadow: 0 4px 12px rgba(37,99,235,0.35);
+  transition: all 0.25s ease;
+  box-shadow: var(--shadow);
   flex-shrink: 0;
 }
 
 .sendBtn:hover:not(:disabled) {
-  transform: scale(1.08);
-  box-shadow: 0 6px 16px rgba(37,99,235,0.45);
+  transform: scale(1.08) rotate(8deg);
+  box-shadow: var(--shadow-lg);
+}
+
+.sendBtn:active:not(:disabled) {
+  transform: scale(0.92);
 }
 
 .sendBtn:disabled {
@@ -165,14 +185,23 @@
   box-shadow: none;
 }
 
+.reassure {
+  text-align: center;
+  font-size: 12.5px;
+  color: var(--secondary);
+  font-weight: 600;
+  padding: 2px 0 0;
+}
+
 .disclaimer {
   text-align: center;
   font-size: 12px;
   color: var(--text-muted);
   padding: 8px 0 16px;
-  line-height: 1.5;
+  line-height: 1.55;
 }
 
 .disclaimer strong {
-  color: var(--danger);
+  color: var(--secondary);
+  font-weight: 700;
 }

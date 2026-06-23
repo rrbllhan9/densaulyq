@@ -3,12 +3,12 @@ import { findSymptom } from '../data/symptoms'
 import ResultCard from './ResultCard'
 import styles from './SymptomChecker.module.css'
 
-const SUGGESTIONS = ['болит голова', 'высокая температура', 'боль в животе', 'сильный кашель']
+const SUGGESTIONS = ['болит голова', 'температура', 'болит живот', 'кашель']
 
 const WELCOME = {
   id: 'welcome',
   type: 'bot',
-  content: '👋 Здравствуйте! Я помогу определить первую помощь при ваших симптомах.\n\nОпишите, что вас беспокоит — например, «болит голова» или «высокая температура». Я дам рекомендации и помогу найти нужного врача.\n\n⚠️ Это не замена консультации врача. При серьёзных симптомах — звоните 103.',
+  content: 'Здравствуйте 🌿 Расскажите, что вас беспокоит — например, «болит голова» или «температура».\n\nПодскажу, что можно сделать сейчас, и помогу записаться к врачу без звонка.',
 }
 
 export default function SymptomChecker({ onShowDoctors }) {
@@ -41,7 +41,7 @@ export default function SymptomChecker({ onShowDoctors }) {
             id: Date.now() + 1,
             type: 'bot',
             content:
-              '🤔 К сожалению, я не смог распознать симптом. Попробуйте описать подробнее или выберите из подсказок ниже.\n\nЕсли симптомы серьёзные — пожалуйста, позвоните 103 или обратитесь к врачу.',
+              'Пока не совсем понял. Опишите чуть подробнее или выберите вариант из подсказок ниже.',
           },
         ])
       }
@@ -61,7 +61,7 @@ export default function SymptomChecker({ onShowDoctors }) {
       <div className={styles.chat}>
         {messages.map((msg, i) => (
           <div key={msg.id} className={`${styles.msgRow} ${msg.type === 'user' ? styles.user : styles.bot}`}>
-            {msg.type !== 'user' && <div className={styles.avatar}>🏥</div>}
+            {msg.type !== 'user' && <div className={styles.avatar}>🌿</div>}
             {msg.type === 'result' ? (
               <ResultCard symptom={msg.symptom} onShowDoctors={onShowDoctors} />
             ) : (
@@ -79,7 +79,7 @@ export default function SymptomChecker({ onShowDoctors }) {
 
         {loading && (
           <div className={`${styles.msgRow} ${styles.bot}`}>
-            <div className={styles.avatar}>🏥</div>
+            <div className={styles.avatar}>🌿</div>
             <div className={styles.typing}>
               <span /><span /><span />
             </div>
@@ -90,6 +90,7 @@ export default function SymptomChecker({ onShowDoctors }) {
       </div>
 
       <div className={styles.suggestions}>
+        <span className={styles.suggestLabel}>Например:</span>
         {SUGGESTIONS.map(s => (
           <button key={s} className={styles.chip} onClick={() => send(s)}>
             {s}
@@ -104,21 +105,21 @@ export default function SymptomChecker({ onShowDoctors }) {
           value={input}
           onChange={e => setInput(e.target.value)}
           onKeyDown={handleKey}
-          placeholder="Опишите симптомы... (например: болит голова, температура 38)"
+          placeholder="Расскажите своими словами, что вас беспокоит…"
           rows={1}
         />
         <button
           className={styles.sendBtn}
           onClick={() => send()}
           disabled={!input.trim() || loading}
+          aria-label="Отправить"
         >
           ➤
         </button>
       </div>
 
       <p className={styles.disclaimer}>
-        ⚠️ Данный сервис предоставляет общую информацию и не заменяет консультацию врача.
-        При серьёзных или угрожающих жизни симптомах — немедленно звоните <strong>103</strong>.
+        Это общие подсказки, а не замена врача. Если станет плохо — бесплатный номер <strong>103</strong>.
       </p>
     </div>
   )

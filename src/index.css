@@ -5,35 +5,96 @@
 }
 
 :root {
-  --primary: #2563eb;
-  --primary-light: #3b82f6;
-  --primary-dark: #1d4ed8;
-  --secondary: #10b981;
-  --secondary-light: #34d399;
-  --accent: #f59e0b;
-  --danger: #ef4444;
-  --danger-light: #fee2e2;
-  --bg: #f0f4ff;
+  /* Спокойная палитра: мягкий синий, мятный, тёплый бежевый */
+  --primary: #45748f;          /* приглушённый сине-серый */
+  --primary-light: #6d97b1;
+  --primary-dark: #3a6075;
+  --secondary: #5aa68e;        /* мятный / шалфей */
+  --secondary-light: #87c2ad;
+  --accent: #c79f6e;           /* тёплый песочно-бежевый */
+  --accent-light: #e3cfac;
+
+  /* Мягкие фоновые оттенки для блоков */
+  --soft-blue: #dbe7ef;
+  --soft-mint: #d6e8df;
+  --soft-sand: #efe1cb;
+
+  /* Внимание — приглушённая терракота вместо тревожного красного */
+  --danger: #c47e60;
+  --danger-light: #f0e1d6;
+  --danger-text: #8a4e38;
+
+  --bg: #ece5d9;               /* тёплый кремовый фон */
   --surface: #ffffff;
-  --surface-2: #f8faff;
-  --border: #e2e8f0;
-  --text: #1e293b;
-  --text-muted: #64748b;
-  --text-light: #94a3b8;
-  --shadow-sm: 0 1px 3px rgba(0,0,0,0.08);
-  --shadow: 0 4px 16px rgba(37,99,235,0.1);
-  --shadow-lg: 0 8px 32px rgba(37,99,235,0.15);
-  --radius: 16px;
-  --radius-sm: 10px;
-  --radius-lg: 24px;
+  --surface-2: #f7f1e7;        /* тёплый off-white */
+  --border: #e0d5c3;           /* мягкая тёплая граница */
+  --text: #383b42;             /* мягкий графит, не чёрный */
+  --text-muted: #7d776b;       /* тёплый серый */
+  --text-light: #a8a193;
+
+  --shadow-sm: 0 1px 3px rgba(91,140,175,0.06);
+  --shadow: 0 6px 24px rgba(91,140,175,0.08);
+  --shadow-lg: 0 12px 40px rgba(91,140,175,0.12);
+
+  /* Скруглённые формы */
+  --radius: 22px;
+  --radius-sm: 14px;
+  --radius-lg: 30px;
+
+  --header-h: 72px;
+  --ease-soft: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-back: cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 body {
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-family: 'Nunito', -apple-system, BlinkMacSystemFont, sans-serif;
   background: var(--bg);
   color: var(--text);
-  line-height: 1.6;
+  line-height: 1.65;
   min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  position: relative;
+  overflow-x: hidden;
+}
+
+/* Живой фон: мягкие плавающие градиентные пятна */
+body::before,
+body::after {
+  content: '';
+  position: fixed;
+  z-index: -1;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 0.55;
+  pointer-events: none;
+}
+
+body::before {
+  width: 55vw;
+  height: 55vw;
+  top: -18vw;
+  right: -12vw;
+  background: radial-gradient(circle, var(--soft-mint), transparent 70%);
+  animation: floatA 22s ease-in-out infinite;
+}
+
+body::after {
+  width: 50vw;
+  height: 50vw;
+  bottom: -16vw;
+  left: -14vw;
+  background: radial-gradient(circle, var(--soft-blue), transparent 70%);
+  animation: floatB 26s ease-in-out infinite;
+}
+
+@keyframes floatA {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(-4vw, 4vw) scale(1.12); }
+}
+
+@keyframes floatB {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(5vw, -3vw) scale(1.1); }
 }
 
 #root {
@@ -59,34 +120,94 @@ input, textarea {
   background: var(--bg);
 }
 ::-webkit-scrollbar-thumb {
-  background: var(--border);
-  border-radius: 3px;
+  background: var(--accent-light);
+  border-radius: 8px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--accent);
 }
 
-/* Animations */
+/* Плавные, спокойные анимации */
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(12px); }
+  from { opacity: 0; transform: translateY(10px); }
   to { opacity: 1; transform: translateY(0); }
 }
 
 @keyframes slideUp {
-  from { opacity: 0; transform: translateY(24px); }
-  to { opacity: 1; transform: translateY(0); }
+  from { opacity: 0; transform: translateY(22px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
 }
 
 @keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.5; }
+  0%, 100% { opacity: 1; transform: translateY(0); }
+  50% { opacity: 0.45; transform: translateY(-2px); }
 }
 
 @keyframes spin {
   to { transform: rotate(360deg); }
 }
 
+@keyframes breathe {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.06); }
+}
+
+@keyframes popIn {
+  0% { opacity: 0; transform: scale(0.6); }
+  60% { opacity: 1; transform: scale(1.08); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+@keyframes slideInLeft {
+  from { opacity: 0; transform: translateX(-22px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes slideInRight {
+  from { opacity: 0; transform: translateX(22px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes checkPop {
+  0% { transform: scale(0) rotate(-20deg); opacity: 0; }
+  55% { transform: scale(1.25) rotate(6deg); opacity: 1; }
+  100% { transform: scale(1) rotate(0); opacity: 1; }
+}
+
+@keyframes ringPulse {
+  0% { box-shadow: 0 0 0 0 rgba(90,166,142,0.45); }
+  70% { box-shadow: 0 0 0 18px rgba(90,166,142,0); }
+  100% { box-shadow: 0 0 0 0 rgba(90,166,142,0); }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+@keyframes overlayIn {
+  from { opacity: 0; backdrop-filter: blur(0); }
+  to { opacity: 1; backdrop-filter: blur(6px); }
+}
+
+@keyframes modalIn {
+  0% { opacity: 0; transform: translateY(40px) scale(0.9); filter: blur(6px); }
+  60% { filter: blur(0); }
+  100% { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
+}
+
 .fade-in {
-  animation: fadeIn 0.4s ease forwards;
+  animation: fadeIn 0.7s var(--ease-soft) forwards;
 }
 
 .slide-up {
-  animation: slideUp 0.5s ease forwards;
+  animation: slideUp 0.7s var(--ease-soft) forwards;
+}
+
+/* Уважаем тех, кому спокойнее без движения */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
 }

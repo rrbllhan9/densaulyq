@@ -14,7 +14,7 @@ function Stars({ rating }) {
 }
 
 export default function DoctorCard({ doctor, distance }) {
-  const [showModal, setShowModal] = useState(false)
+  const [modalMode, setModalMode] = useState(null)
   const [showReviews, setShowReviews] = useState(false)
 
   return (
@@ -40,20 +40,35 @@ export default function DoctorCard({ doctor, distance }) {
           )}
         </div>
 
+        {doctor.tags && (
+          <div className={styles.tags}>
+            {doctor.tags.map(t => (
+              <span key={t} className={styles.tag}>{t}</span>
+            ))}
+          </div>
+        )}
+
         <div className={styles.cardBottom}>
           <div className={styles.meta}>
             <span className={styles.address}>📍 {doctor.address}</span>
             <span className={styles.price}>💳 {doctor.price}</span>
           </div>
-          <button className={styles.appointBtn} onClick={() => setShowModal(true)}>
-            Записаться на приём
-          </button>
+          <div className={styles.actions}>
+            <button className={styles.appointBtn} onClick={() => setModalMode('visit')}>
+              Записаться без звонка
+            </button>
+            <button className={styles.onlineBtn} onClick={() => setModalMode('online')}>
+              💬 Онлайн-консультация
+            </button>
+          </div>
         </div>
 
         {showReviews && <ReviewsList reviews={doctor.reviews} />}
       </div>
 
-      {showModal && <AppointmentModal doctor={doctor} onClose={() => setShowModal(false)} />}
+      {modalMode && (
+        <AppointmentModal doctor={doctor} mode={modalMode} onClose={() => setModalMode(null)} />
+      )}
     </>
   )
 }
