@@ -1,4 +1,5 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { createPortal } from 'react-dom'
 import styles from './AppointmentModal.module.css'
 
 export default function AppointmentModal({ doctor, mode = 'visit', onClose }) {
@@ -8,6 +9,13 @@ export default function AppointmentModal({ doctor, mode = 'visit', onClose }) {
   const [name, setName] = useState('')
   const [phone, setPhone] = useState('')
 
+  // Пока модалка открыта — глушим тяжёлую анимацию фоновых пятен,
+  // иначе backdrop-filter оверлея лагает при каждом нажатии клавиши.
+  useEffect(() => {
+    document.body.classList.add('modal-open')
+    return () => document.body.classList.remove('modal-open')
+  }, [])
+
   const isOnline = bookingMode === 'online'
 
   function handleConfirm() {
@@ -15,7 +23,7 @@ export default function AppointmentModal({ doctor, mode = 'visit', onClose }) {
     setConfirmed(true)
   }
 
-  return (
+  return createPortal(
     <div className={styles.overlay} onClick={e => e.target === e.currentTarget && onClose()}>
       <div className={styles.modal}>
         <button className={styles.close} onClick={onClose} aria-label="Закрыть">✕</button>
@@ -123,6 +131,7 @@ export default function AppointmentModal({ doctor, mode = 'visit', onClose }) {
           </>
         )}
       </div>
-    </div>
+    </div>,
+    document.body
   )
 }

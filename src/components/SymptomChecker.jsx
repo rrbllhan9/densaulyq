@@ -114,7 +114,7 @@ export default function SymptomChecker({ onShowDoctors }) {
           disabled={!input.trim() || loading}
           aria-label="Отправить"
         >
-          ➤
+          <span>➤</span>
         </button>
       </div>
 

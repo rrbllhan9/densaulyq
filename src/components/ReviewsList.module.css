@@ -1,16 +1,18 @@
 .wrapper {
-  padding: 14px 16px;
+  padding: 16px 18px 18px;
   border-top: 1px solid var(--border);
   background: var(--surface-2);
+  animation: fadeIn 0.4s var(--ease-soft);
 }
 
 .title {
+  font-family: var(--font-head);
   font-size: 13px;
   font-weight: 700;
-  color: var(--text-muted);
+  color: var(--primary-dark);
   text-transform: uppercase;
-  letter-spacing: 0.5px;
-  margin-bottom: 12px;
+  letter-spacing: 0.6px;
+  margin-bottom: 14px;
 }
 
 .list {
@@ -23,33 +25,42 @@
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
-  padding: 12px 14px;
+  padding: 14px 16px;
+  box-shadow: var(--shadow-xs);
+  transition: transform 0.3s var(--ease-soft), box-shadow 0.3s var(--ease-soft);
+}
+
+.review:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow);
 }
 
 .reviewHeader {
   display: flex;
   align-items: center;
-  gap: 10px;
-  margin-bottom: 8px;
+  gap: 11px;
+  margin-bottom: 9px;
 }
 
 .authorAvatar {
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, var(--primary-light), var(--secondary));
-  color: white;
-  font-size: 14px;
+  width: 36px;
+  height: 36px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, var(--secondary), var(--secondary-light));
+  color: #fff;
+  font-size: 15px;
   font-weight: 700;
+  font-family: var(--font-head);
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
+  box-shadow: var(--shadow-xs);
 }
 
 .author {
   font-size: 14px;
-  font-weight: 600;
+  font-weight: 700;
   color: var(--text);
 }
 
@@ -65,7 +76,7 @@
 }
 
 .text {
-  font-size: 13px;
+  font-size: 13.5px;
   color: var(--text);
   line-height: 1.6;
 }

@@ -2,26 +2,22 @@
   flex: 1;
   position: relative;
   overflow: hidden;
+  min-height: 0;
 }
 
 .page {
   height: 100%;
-  animation: pageIn 0.62s var(--ease-soft) both;
-  will-change: transform, opacity, filter;
+  animation: pageIn 0.55s var(--ease-soft) both;
+  will-change: transform, opacity;
 }
 
 @keyframes pageIn {
   0% {
     opacity: 0;
-    transform: translateY(18px) scale(0.99);
-    filter: blur(8px);
-  }
-  60% {
-    filter: blur(0);
+    transform: translateY(20px) scale(0.992);
   }
   100% {
     opacity: 1;
     transform: translateY(0) scale(1);
-    filter: blur(0);
   }
 }

@@ -29,7 +29,7 @@ export default function Header({ page, onChangePage }) {
 
         <a href="tel:103" className={styles.emergency} title="Срочная помощь — 103, бесплатно">
           <span className={styles.emergencyIcon}>☎️</span>
-          <span className={styles.emergencyText}>103</span>
+          <span className={styles.emergencyText}>Срочно · 103</span>
         </a>
       </div>
     </header>

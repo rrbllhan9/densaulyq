@@ -1,9 +1,9 @@
 import styles from './ResultCard.module.css'
 
 const SEVERITY_LABELS = {
-  low: { label: 'Можно справиться дома', color: 'var(--primary-dark)', bg: 'var(--soft-mint)' },
-  medium: { label: 'Стоит показаться врачу', color: 'var(--primary-dark)', bg: 'var(--soft-blue)' },
-  high: { label: 'Лучше не откладывать визит', color: 'var(--danger-text)', bg: 'var(--soft-sand)' },
+  low: { label: 'Можно справиться дома', color: 'var(--primary-dark)', bg: 'var(--soft-sage)' },
+  medium: { label: 'Стоит показаться врачу', color: 'var(--primary-dark)', bg: 'var(--soft-cream)' },
+  high: { label: 'Лучше не откладывать визит', color: 'var(--danger-text)', bg: 'var(--soft-peach)' },
 }
 
 export default function ResultCard({ symptom, onShowDoctors }) {

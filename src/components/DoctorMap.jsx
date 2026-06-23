@@ -4,6 +4,7 @@ import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
 import { doctors, getDistance } from '../data/doctors'
 import DoctorCard from './DoctorCard'
+import AppointmentModal from './AppointmentModal'
 import styles from './DoctorMap.module.css'
 
 // Fix default leaflet marker icons
@@ -15,16 +16,26 @@ L.Icon.Default.mergeOptions({
 })
 
 const userIcon = L.divIcon({
-  html: '<div style="width:16px;height:16px;background:#5b8caf;border:3px solid white;border-radius:50%;box-shadow:0 0 0 5px rgba(116,185,164,0.3)"></div>',
-  iconSize: [16, 16],
-  iconAnchor: [8, 8],
+  html: '<div style="width:18px;height:18px;background:#C8775A;border:3px solid white;border-radius:50%;box-shadow:0 0 0 5px rgba(200,119,90,0.3)"></div>',
+  iconSize: [18, 18],
+  iconAnchor: [9, 9],
   className: '',
 })
 
+// Заметная булавка-капля цвета sage с белой окантовкой и тенью
 const doctorIcon = L.divIcon({
-  html: '<div style="font-size:24px;line-height:1;filter:drop-shadow(0 2px 5px rgba(91,140,175,0.35))">🤍</div>',
-  iconSize: [28, 28],
-  iconAnchor: [14, 28],
+  html: `<div style="
+    width:36px;height:36px;
+    background:linear-gradient(135deg,#6B9080,#84A98C);
+    border:3px solid #fff;
+    border-radius:50% 50% 50% 0;
+    transform:rotate(-45deg);
+    box-shadow:0 5px 12px rgba(61,58,54,0.4);
+    display:flex;align-items:center;justify-content:center;
+  "><span style="transform:rotate(45deg);font-size:16px;line-height:1">🩺</span></div>`,
+  iconSize: [36, 36],
+  iconAnchor: [18, 36],
+  popupAnchor: [0, -34],
   className: '',
 })
 
@@ -44,6 +55,7 @@ export default function DoctorMap() {
   const [locError, setLocError] = useState(null)
   const [sortedDoctors, setSortedDoctors] = useState(doctors)
   const [selectedId, setSelectedId] = useState(null)
+  const [booking, setBooking] = useState(null) // { doctor, mode }
 
   function locate() {
     setLocating(true)
@@ -104,7 +116,11 @@ export default function DoctorMap() {
               className={`${styles.doctorWrapper} ${selectedId === doc.id ? styles.selected : ''}`}
               onClick={() => setSelectedId(doc.id === selectedId ? null : doc.id)}
             >
-              <DoctorCard doctor={doc} distance={distances[doc.id]} />
+              <DoctorCard
+                doctor={doc}
+                distance={distances[doc.id]}
+                onBook={mode => setBooking({ doctor: doc, mode })}
+              />
             </div>
           ))}
         </div>
@@ -135,7 +151,7 @@ export default function DoctorMap() {
               <Circle
                 center={userPos}
                 radius={1500}
-                pathOptions={{ color: '#74b9a4', fillColor: '#74b9a4', fillOpacity: 0.06, weight: 1.5, dashArray: '6,4' }}
+                pathOptions={{ color: '#6B9080', fillColor: '#6B9080', fillOpacity: 0.07, weight: 1.5, dashArray: '6,4' }}
               />
             </>
           )}
@@ -143,26 +159,56 @@ export default function DoctorMap() {
           {doctors.map(doc => (
             <Marker key={doc.id} position={[doc.lat, doc.lng]} icon={doctorIcon}>
               <Popup maxWidth={260}>
-                <div style={{ fontFamily: 'Nunito, sans-serif' }}>
-                  <strong style={{ fontSize: 14 }}>{doc.name}</strong>
-                  <div style={{ color: '#8b8579', fontSize: 12, marginTop: 2 }}>{doc.specialty}</div>
+                <div style={{ fontFamily: 'Inter, sans-serif' }}>
+                  <strong style={{ fontSize: 14, color: '#3D3A36' }}>{doc.name}</strong>
+                  <div style={{ color: '#7A746B', fontSize: 12, marginTop: 2 }}>{doc.specialty}</div>
                   <div style={{ marginTop: 6, fontSize: 13 }}>⭐ {doc.rating} · {doc.reviewCount} отзывов</div>
-                  <div style={{ fontSize: 12, color: '#8b8579', marginTop: 4 }}>{doc.address}</div>
-                  <div style={{ fontSize: 13, fontWeight: 700, color: '#4a7491', marginTop: 4 }}>{doc.price}</div>
-                  <div style={{ fontSize: 12, color: '#74b9a4', fontWeight: 700, marginTop: 4 }}>💬 Принимает онлайн · без звонка</div>
+                  <div style={{ fontSize: 12, color: '#7A746B', marginTop: 4 }}>{doc.address}</div>
+                  <div style={{ fontSize: 13, fontWeight: 700, color: '#557566', marginTop: 4 }}>{doc.price}</div>
+                  <div style={{ fontSize: 12, color: '#6B9080', fontWeight: 700, marginTop: 4 }}>💬 Принимает онлайн · без звонка</div>
                   {distances[doc.id] != null && (
-                    <div style={{ fontSize: 12, color: '#74b9a4', marginTop: 4 }}>
+                    <div style={{ fontSize: 12, color: '#6B9080', marginTop: 4 }}>
                       📍 {distances[doc.id] < 1
                         ? `${Math.round(distances[doc.id] * 1000)} м от вас`
                         : `${distances[doc.id].toFixed(1)} км от вас`}
                     </div>
                   )}
+                  <div style={{ display: 'flex', gap: 6, marginTop: 10 }}>
+                    <button
+                      onClick={() => setBooking({ doctor: doc, mode: 'visit' })}
+                      style={{
+                        flex: 1, padding: '9px 10px', border: 'none', cursor: 'pointer',
+                        background: 'linear-gradient(135deg,#6B9080,#84A98C)', color: '#fff',
+                        borderRadius: 11, fontSize: 12.5, fontWeight: 700, fontFamily: 'inherit',
+                      }}
+                    >
+                      Записаться
+                    </button>
+                    <button
+                      onClick={() => setBooking({ doctor: doc, mode: 'online' })}
+                      style={{
+                        flex: 1, padding: '9px 10px', cursor: 'pointer',
+                        background: '#fff', color: '#557566', border: '1.5px solid #84A98C',
+                        borderRadius: 11, fontSize: 12.5, fontWeight: 700, fontFamily: 'inherit',
+                      }}
+                    >
+                      💬 Онлайн
+                    </button>
+                  </div>
                 </div>
               </Popup>
             </Marker>
           ))}
         </MapContainer>
       </div>
+
+      {booking && (
+        <AppointmentModal
+          doctor={booking.doctor}
+          mode={booking.mode}
+          onClose={() => setBooking(null)}
+        />
+      )}
     </div>
   )
 }
