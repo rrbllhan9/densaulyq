@@ -1,3 +1,4 @@
+import BreathingExercise from './BreathingExercise'
 import styles from './ResultCard.module.css'
 
 const SEVERITY_LABELS = {
@@ -37,17 +38,35 @@ export default function ResultCard({ symptom, onShowDoctors }) {
         </ul>
       </section>
 
+      {symptom.breathing && (
+        <section className={styles.section}>
+          <h4 className={styles.sectionTitle}>🫁 Дыхание, которое успокаивает</h4>
+          <BreathingExercise />
+        </section>
+      )}
+
       <section className={styles.section}>
         <h4 className={styles.sectionTitle}>🤍 Кто может помочь</h4>
         <div className={styles.specialistBox}>
           <span className={styles.specialistName}>{symptom.specialist.name}</span>
           <p className={styles.specialistReason}>{symptom.specialist.reason}</p>
-          <p className={styles.noCallHint}>
-            Записаться можно здесь, <strong>без звонка</strong> — или написать врачу онлайн.
-          </p>
-          <button className={styles.findDoctorBtn} onClick={onShowDoctors}>
-            Подобрать врача рядом →
-          </button>
+          {symptom.id === 'emergency' ? (
+            <a href="tel:103" className={styles.emergencyBtn}>
+              📞 Позвонить 103 — бесплатно
+            </a>
+          ) : (
+            <>
+              <p className={styles.noCallHint}>
+                Записаться можно здесь, <strong>без звонка</strong> — или написать врачу онлайн.
+              </p>
+              <button
+                className={styles.findDoctorBtn}
+                onClick={() => onShowDoctors(symptom.specialtyIds)}
+              >
+                Подобрать врача рядом →
+              </button>
+            </>
+          )}
         </div>
       </section>
 

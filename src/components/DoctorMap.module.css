@@ -77,6 +77,59 @@
   animation-delay: 0.1s;
 }
 
+.recBanner {
+  margin: 14px 16px 0;
+  padding: 13px 16px;
+  background: linear-gradient(135deg, var(--soft-sage), var(--soft-cream));
+  border: 1px solid var(--primary-light);
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  color: var(--primary-dark);
+  line-height: 1.5;
+  flex-shrink: 0;
+  box-shadow: var(--shadow-xs);
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  animation: slideInLeft 0.6s var(--ease-soft) both;
+  animation-delay: 0.1s;
+}
+
+.recBanner strong {
+  font-weight: 800;
+}
+
+.recToggle {
+  align-self: flex-start;
+  padding: 7px 14px;
+  background: rgba(255, 255, 255, 0.8);
+  color: var(--primary-dark);
+  border: 1.5px solid var(--primary-light);
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+  transition: background 0.25s, transform 0.2s;
+}
+
+.recToggle:hover {
+  background: #fff;
+  transform: translateY(-1px);
+}
+
+.recBadge {
+  display: inline-block;
+  margin: 0 0 -10px 14px;
+  position: relative;
+  z-index: 1;
+  padding: 4px 12px;
+  background: linear-gradient(135deg, var(--primary), var(--primary-light));
+  color: #fff;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+  box-shadow: var(--shadow-sm);
+}
+
 .locError, .locSuccess {
   margin: 12px 16px 0;
   padding: 12px 15px;

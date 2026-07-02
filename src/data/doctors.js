@@ -137,7 +137,65 @@ export const doctors = [
       { author: 'Сергей П.', stars: 4, date: '2 июня 2025', text: 'Хороший врач, но запись занята на 2 недели вперёд.' },
     ],
   },
+  {
+    id: 7,
+    name: 'Динара Смагулова',
+    specialty: 'Психотерапевт',
+    specialtyId: 'psychotherapist',
+    experience: 10,
+    rating: 4.9,
+    reviewCount: 76,
+    address: 'ул. Жандосова, 58, Алматы',
+    phone: '+7 (727) 355-20-10',
+    lat: 43.2286,
+    lng: 76.8724,
+    avatar: null,
+    price: '8 000 ₸',
+    available: ['10:00', '12:00', '14:00', '16:00', '18:00'],
+    online: true,
+    tags: ['🤍 Бережно про тревогу и панику', '💬 Онлайн-сессии'],
+    reviews: [
+      { author: 'Камила Ж.', stars: 5, date: '21 июня 2025', text: 'Полгода мучилась с паническими атаками. После нескольких сессий стало намного легче — спасибо огромное!' },
+      { author: 'Ильяс Б.', stars: 5, date: '13 июня 2025', text: 'Первый раз обратился к психотерапевту, очень боялся. Оказалось совсем не страшно, наоборот — спокойно и по-доброму.' },
+      { author: 'Вероника С.', stars: 5, date: '4 июня 2025', text: 'Помогла наладить сон и справиться с тревожностью. Онлайн-формат очень удобный.' },
+    ],
+  },
+  {
+    id: 8,
+    name: 'Тимур Ахметов',
+    specialty: 'ЛОР',
+    specialtyId: 'lor',
+    experience: 14,
+    rating: 4.7,
+    reviewCount: 65,
+    address: 'ул. Гоголя, 86, Алматы',
+    phone: '+7 (727) 279-41-15',
+    lat: 43.2594,
+    lng: 76.9312,
+    avatar: null,
+    price: '5 500 ₸',
+    available: ['09:00', '11:00', '13:30', '15:30', '17:30'],
+    online: true,
+    tags: ['🌿 Аккуратный осмотр, без боли', '💬 Принимает онлайн'],
+    reviews: [
+      { author: 'Гульмира Т.', stars: 5, date: '17 июня 2025', text: 'Вылечил затяжной гайморит без проколов. Очень аккуратный и внимательный врач.' },
+      { author: 'Андрей Л.', stars: 4, date: '9 июня 2025', text: 'Хороший специалист, быстро разобрался с проблемой.' },
+      { author: 'Салтанат К.', stars: 5, date: '31 мая 2025', text: 'Ходим к нему всей семьёй. Детям тоже нравится — ничего не боятся.' },
+    ],
+  },
 ]
+
+// Человекочитаемые названия специальностей — для плашки «подобрали по вашему запросу».
+export const specialtyNames = {
+  therapist: 'Терапевт',
+  neurologist: 'Невролог',
+  gastroenterologist: 'Гастроэнтеролог',
+  pulmonologist: 'Пульмонолог',
+  pediatrician: 'Педиатр',
+  cardiologist: 'Кардиолог',
+  psychotherapist: 'Психотерапевт',
+  lor: 'ЛОР',
+}
 
 export function getDistance(lat1, lng1, lat2, lng2) {
   const R = 6371
@@ -151,11 +209,3 @@ export function getDistance(lat1, lng1, lat2, lng2) {
   return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
 }
 
-export const specialtyToId = {
-  'Невролог': 'neurologist',
-  'Терапевт': 'therapist',
-  'Гастроэнтеролог': 'gastroenterologist',
-  'Пульмонолог': 'pulmonologist',
-  'Педиатр': 'pediatrician',
-  'Кардиолог': 'cardiologist',
-}

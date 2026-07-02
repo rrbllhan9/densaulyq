@@ -3,7 +3,7 @@ import { triage } from '../data/triage'
 import ResultCard from './ResultCard'
 import styles from './SymptomChecker.module.css'
 
-const SUGGESTIONS = ['болит голова', 'температура', 'болит живот', 'кашель']
+const SUGGESTIONS = ['болит голова', 'температура', 'тревожно, паника', 'болит горло', 'не могу уснуть']
 
 const WELCOME = {
   id: 'welcome',

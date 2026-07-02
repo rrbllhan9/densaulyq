@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { MapContainer, TileLayer, Marker, Popup, Circle, useMap } from 'react-leaflet'
 import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
-import { doctors, getDistance } from '../data/doctors'
+import { doctors, getDistance, specialtyNames } from '../data/doctors'
 import DoctorCard from './DoctorCard'
 import AppointmentModal from './AppointmentModal'
 import styles from './DoctorMap.module.css'
@@ -22,22 +22,30 @@ const userIcon = L.divIcon({
   className: '',
 })
 
-// Заметная булавка-капля цвета sage с белой окантовкой и тенью
-const doctorIcon = L.divIcon({
-  html: `<div style="
-    width:36px;height:36px;
-    background:linear-gradient(135deg,#6B9080,#84A98C);
-    border:3px solid #fff;
-    border-radius:50% 50% 50% 0;
-    transform:rotate(-45deg);
-    box-shadow:0 5px 12px rgba(61,58,54,0.4);
-    display:flex;align-items:center;justify-content:center;
-  "><span style="transform:rotate(45deg);font-size:16px;line-height:1">🩺</span></div>`,
-  iconSize: [36, 36],
-  iconAnchor: [18, 36],
-  popupAnchor: [0, -34],
-  className: '',
-})
+// Булавка-капля: sage для всех, терракота — для рекомендованных триажем
+function makeDoctorIcon(highlighted) {
+  const bg = highlighted
+    ? 'linear-gradient(135deg,#C8775A,#E8B4A0)'
+    : 'linear-gradient(135deg,#6B9080,#84A98C)'
+  return L.divIcon({
+    html: `<div style="
+      width:36px;height:36px;
+      background:${bg};
+      border:3px solid #fff;
+      border-radius:50% 50% 50% 0;
+      transform:rotate(-45deg);
+      box-shadow:0 5px 12px rgba(61,58,54,0.4);
+      display:flex;align-items:center;justify-content:center;
+    "><span style="transform:rotate(45deg);font-size:16px;line-height:1">🩺</span></div>`,
+    iconSize: [36, 36],
+    iconAnchor: [18, 36],
+    popupAnchor: [0, -34],
+    className: '',
+  })
+}
+
+const doctorIcon = makeDoctorIcon(false)
+const recommendedIcon = makeDoctorIcon(true)
 
 function FlyTo({ center }) {
   const map = useMap()
@@ -49,25 +57,24 @@ function FlyTo({ center }) {
 
 const ALMATY_CENTER = [43.2220, 76.8512]
 
-export default function DoctorMap() {
+export default function DoctorMap({ recommendedSpecialties }) {
   const [userPos, setUserPos] = useState(null)
   const [locating, setLocating] = useState(false)
   const [locError, setLocError] = useState(null)
-  const [sortedDoctors, setSortedDoctors] = useState(doctors)
   const [selectedId, setSelectedId] = useState(null)
   const [booking, setBooking] = useState(null) // { doctor, mode }
+  // Если пришли из чата с рекомендацией — сначала показываем только подходящих.
+  const [showAll, setShowAll] = useState(!recommendedSpecialties?.length)
+
+  const recSet = recommendedSpecialties?.length ? new Set(recommendedSpecialties) : null
+  const isRecommended = doc => Boolean(recSet?.has(doc.specialtyId))
 
   function locate() {
     setLocating(true)
     setLocError(null)
     navigator.geolocation.getCurrentPosition(
       pos => {
-        const { latitude: lat, longitude: lng } = pos.coords
-        setUserPos([lat, lng])
-        const withDist = doctors
-          .map(d => ({ ...d, dist: getDistance(lat, lng, d.lat, d.lng) }))
-          .sort((a, b) => a.dist - b.dist)
-        setSortedDoctors(withDist)
+        setUserPos([pos.coords.latitude, pos.coords.longitude])
         setLocating(false)
       },
       () => {
@@ -84,6 +91,19 @@ export default function DoctorMap() {
       )
     : {}
 
+  // Список: фильтр по рекомендации → ближайшие сверху → рекомендованные сверху.
+  let visibleDoctors = recSet && !showAll ? doctors.filter(isRecommended) : [...doctors]
+  if (userPos) {
+    visibleDoctors.sort((a, b) => distances[a.id] - distances[b.id])
+  } else if (recSet && showAll) {
+    visibleDoctors.sort((a, b) => Number(isRecommended(b)) - Number(isRecommended(a)))
+  }
+
+  const recNames = recommendedSpecialties
+    ?.map(id => specialtyNames[id])
+    .filter(Boolean)
+    .join(', ')
+
   return (
     <div className={styles.wrapper}>
       <div className={styles.sidebar}>
@@ -98,9 +118,20 @@ export default function DoctorMap() {
           </button>
         </div>
 
-        <div className={styles.onlineNote}>
-          Все врачи принимают онлайн и записывают без звонка.
-        </div>
+        {recSet ? (
+          <div className={styles.recBanner}>
+            <span>
+              🌿 Подобрали по вашему запросу: <strong>{recNames}</strong>
+            </span>
+            <button className={styles.recToggle} onClick={() => setShowAll(s => !s)}>
+              {showAll ? 'Только подходящие' : 'Показать всех'}
+            </button>
+          </div>
+        ) : (
+          <div className={styles.onlineNote}>
+            Все врачи принимают онлайн и записывают без звонка.
+          </div>
+        )}
 
         {locError && <div className={styles.locError}>{locError}</div>}
         {userPos && (
@@ -110,12 +141,15 @@ export default function DoctorMap() {
         )}
 
         <div className={styles.doctorList}>
-          {sortedDoctors.map(doc => (
+          {visibleDoctors.map(doc => (
             <div
               key={doc.id}
               className={`${styles.doctorWrapper} ${selectedId === doc.id ? styles.selected : ''}`}
               onClick={() => setSelectedId(doc.id === selectedId ? null : doc.id)}
             >
+              {isRecommended(doc) && (
+                <div className={styles.recBadge}>✓ Подходит по вашему запросу</div>
+              )}
               <DoctorCard
                 doctor={doc}
                 distance={distances[doc.id]}
@@ -157,7 +191,11 @@ export default function DoctorMap() {
           )}
 
           {doctors.map(doc => (
-            <Marker key={doc.id} position={[doc.lat, doc.lng]} icon={doctorIcon}>
+            <Marker
+              key={doc.id}
+              position={[doc.lat, doc.lng]}
+              icon={isRecommended(doc) ? recommendedIcon : doctorIcon}
+            >
               <Popup maxWidth={260}>
                 <div style={{ fontFamily: 'Inter, sans-serif' }}>
                   <strong style={{ fontSize: 14, color: '#3D3A36' }}>{doc.name}</strong>

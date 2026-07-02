@@ -16,6 +16,7 @@ const RED_FLAGS = [
 ]
 
 const EMERGENCY = {
+  id: 'emergency',
   emoji: '🚨',
   title: 'Похоже на неотложное состояние',
   severity: 'high',
