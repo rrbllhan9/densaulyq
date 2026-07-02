@@ -51,6 +51,7 @@ export default function ResultCard({ symptom, onShowDoctors }) {
         </div>
       </section>
 
+      {symptom.medications.length > 0 && (
       <section className={styles.section}>
         <h4 className={styles.sectionTitle}>💊 Что может облегчить состояние</h4>
         <div className={styles.medsGrid}>
@@ -76,6 +77,7 @@ export default function ResultCard({ symptom, onShowDoctors }) {
           Перед приёмом лекарств лучше посоветоваться с врачом — можно онлайн.
         </p>
       </section>
+      )}
 
       <div className={styles.warning}>
         {symptom.warning}

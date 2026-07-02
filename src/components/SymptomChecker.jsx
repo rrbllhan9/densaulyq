@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react'
-import { findSymptom } from '../data/symptoms'
+import { triage } from '../data/triage'
 import ResultCard from './ResultCard'
 import styles from './SymptomChecker.module.css'
 
@@ -30,10 +30,16 @@ export default function SymptomChecker({ onShowDoctors }) {
     setInput('')
     setLoading(true)
 
+    // Небольшая пауза с индикатором печати — спокойный, «живой» ритм диалога.
     setTimeout(() => {
-      const found = findSymptom(trimmed)
-      if (found) {
-        setMessages(prev => [...prev, { id: Date.now() + 1, type: 'result', symptom: found }])
+      const result = triage(trimmed)
+      if (result) {
+        const { symptom, reassurance } = result
+        setMessages(prev => [
+          ...prev,
+          ...(reassurance ? [{ id: Date.now() + 1, type: 'bot', content: reassurance }] : []),
+          { id: Date.now() + 2, type: 'result', symptom },
+        ])
       } else {
         setMessages(prev => [
           ...prev,
@@ -41,12 +47,12 @@ export default function SymptomChecker({ onShowDoctors }) {
             id: Date.now() + 1,
             type: 'bot',
             content:
-              'Пока не совсем понял. Опишите чуть подробнее или выберите вариант из подсказок ниже.',
+              'Пока не совсем понял. Опишите чуть подробнее своими словами или выберите вариант из подсказок ниже.',
           },
         ])
       }
       setLoading(false)
-    }, 900)
+    }, 800)
   }
 
   function handleKey(e) {
