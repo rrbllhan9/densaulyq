@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { MapContainer, TileLayer, Marker, Popup, Circle, useMap } from 'react-leaflet'
 import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
-import { doctors, getDistance, specialtyNames } from '../data/doctors'
+import { doctors, getDistance, specialtyNames, slotRank, earliestSlot, formatDay } from '../data/doctors'
 import DoctorCard from './DoctorCard'
 import AppointmentModal from './AppointmentModal'
 import styles from './DoctorMap.module.css'
@@ -76,7 +76,8 @@ function KeepMapSized() {
 
 const ALMATY_CENTER = [43.2220, 76.8512]
 
-export default function DoctorMap({ recommendedSpecialties }) {
+export default function DoctorMap({ context }) {
+  const recommendedSpecialties = context?.specialtyIds
   const [userPos, setUserPos] = useState(null)
   const [locating, setLocating] = useState(false)
   const [locError, setLocError] = useState(null)
@@ -84,6 +85,8 @@ export default function DoctorMap({ recommendedSpecialties }) {
   const [booking, setBooking] = useState(null) // { doctor, mode }
   // Если пришли из чата с рекомендацией — сначала показываем только подходящих.
   const [showAll, setShowAll] = useState(!recommendedSpecialties?.length)
+  // По умолчанию — кто примет раньше: это главный вопрос, когда нет времени.
+  const [sortBy, setSortBy] = useState('time') // 'time' | 'distance'
 
   const recSet = recommendedSpecialties?.length ? new Set(recommendedSpecialties) : null
   const isRecommended = doc => Boolean(recSet?.has(doc.specialtyId))
@@ -110,11 +113,14 @@ export default function DoctorMap({ recommendedSpecialties }) {
       )
     : {}
 
-  // Список: фильтр по рекомендации → ближайшие сверху → рекомендованные сверху.
+  // Список: фильтр по рекомендации, затем сортировка по выбранному признаку.
   let visibleDoctors = recSet && !showAll ? doctors.filter(isRecommended) : [...doctors]
-  if (userPos) {
+  if (sortBy === 'distance' && userPos) {
     visibleDoctors.sort((a, b) => distances[a.id] - distances[b.id])
-  } else if (recSet && showAll) {
+  } else {
+    visibleDoctors.sort((a, b) => slotRank(a) - slotRank(b))
+  }
+  if (recSet && showAll) {
     visibleDoctors.sort((a, b) => Number(isRecommended(b)) - Number(isRecommended(a)))
   }
 
@@ -127,14 +133,22 @@ export default function DoctorMap({ recommendedSpecialties }) {
     <div className={styles.wrapper}>
       <div className={styles.sidebar}>
         <div className={styles.sidebarHeader}>
-          <h2 className={styles.sidebarTitle}>Врачи рядом</h2>
-          <button
-            className={styles.locateBtn}
-            onClick={locate}
-            disabled={locating}
-          >
-            {locating ? 'Ищем…' : '📍 Кто ближе'}
-          </button>
+          <h2 className={styles.sidebarTitle}>Куда можно попасть</h2>
+          <div className={styles.sortToggle}>
+            <button
+              className={`${styles.sortBtn} ${sortBy === 'time' ? styles.sortActive : ''}`}
+              onClick={() => setSortBy('time')}
+            >
+              Раньше примет
+            </button>
+            <button
+              className={`${styles.sortBtn} ${sortBy === 'distance' ? styles.sortActive : ''}`}
+              onClick={() => { setSortBy('distance'); if (!userPos) locate() }}
+              disabled={locating}
+            >
+              {locating ? 'Ищем…' : 'Ближе ко мне'}
+            </button>
+          </div>
         </div>
 
         {recSet ? (
@@ -148,7 +162,13 @@ export default function DoctorMap({ recommendedSpecialties }) {
           </div>
         ) : (
           <div className={styles.onlineNote}>
-            Все врачи принимают онлайн и записывают без звонка.
+            {(() => {
+              const first = visibleDoctors[0]
+              const s = first && earliestSlot(first)
+              return s
+                ? `Самое раннее окно — ${formatDay(s.dayOffset)} в ${s.time}, ${first.specialty.toLowerCase()}.`
+                : 'Все врачи принимают онлайн и записывают без звонка.'
+            })()}
           </div>
         )}
 
@@ -264,6 +284,8 @@ export default function DoctorMap({ recommendedSpecialties }) {
         <AppointmentModal
           doctor={booking.doctor}
           mode={booking.mode}
+          complaint={context?.complaint}
+          symptom={context?.symptom}
           onClose={() => setBooking(null)}
         />
       )}

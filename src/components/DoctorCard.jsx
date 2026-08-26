@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import ReviewsList from './ReviewsList'
+import { earliestSlot, formatDay } from '../data/doctors'
 import styles from './DoctorCard.module.css'
 
 function Stars({ rating }) {
@@ -17,6 +18,9 @@ export default function DoctorCard({ doctor, distance, onBook }) {
 
   // Действия не должны переключать выделение карточки в списке
   const stop = fn => e => { e.stopPropagation(); fn() }
+
+  const slot = earliestSlot(doctor)
+  const soon = slot && slot.dayOffset <= 1
 
   return (
     <div className={styles.card}>
@@ -45,6 +49,15 @@ export default function DoctorCard({ doctor, distance, onBook }) {
           {doctor.tags.map(t => (
             <span key={t} className={styles.tag}>{t}</span>
           ))}
+        </div>
+      )}
+
+      {slot && (
+        <div className={`${styles.slotRow} ${soon ? styles.slotSoon : ''}`}>
+          <span className={styles.slotLabel}>Ближайшая запись</span>
+          <span className={styles.slotValue}>
+            {formatDay(slot.dayOffset)} в {slot.time}
+          </span>
         </div>
       )}
 

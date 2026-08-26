@@ -1,4 +1,5 @@
 import BreathingExercise from './BreathingExercise'
+import VisitMemo from './VisitMemo'
 import styles from './ResultCard.module.css'
 
 const SEVERITY_LABELS = {
@@ -7,7 +8,7 @@ const SEVERITY_LABELS = {
   high: { label: 'Лучше не откладывать визит', color: 'var(--danger-text)', bg: 'var(--soft-peach)' },
 }
 
-export default function ResultCard({ symptom, onShowDoctors }) {
+export default function ResultCard({ symptom, complaint, onShowDoctors }) {
   const sev = SEVERITY_LABELS[symptom.severity]
 
   function openKaspi(name) {
@@ -61,7 +62,7 @@ export default function ResultCard({ symptom, onShowDoctors }) {
               </p>
               <button
                 className={styles.findDoctorBtn}
-                onClick={() => onShowDoctors(symptom.specialtyIds)}
+                onClick={() => onShowDoctors({ specialtyIds: symptom.specialtyIds, complaint, symptom })}
               >
                 Подобрать врача рядом →
               </button>
@@ -69,6 +70,13 @@ export default function ResultCard({ symptom, onShowDoctors }) {
           )}
         </div>
       </section>
+
+      {complaint && symptom.id !== 'emergency' && (
+        <section className={styles.section}>
+          <h4 className={styles.sectionTitle}>📝 Памятка на приём</h4>
+          <VisitMemo complaint={complaint} symptom={symptom} />
+        </section>
+      )}
 
       {symptom.medications.length > 0 && (
       <section className={styles.section}>

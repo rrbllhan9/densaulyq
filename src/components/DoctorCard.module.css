@@ -143,6 +143,37 @@
   white-space: nowrap;
 }
 
+/* Ближайшее свободное окно — главное, что нужно тому, у кого нет времени */
+.slotRow {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin: 0 18px 12px;
+  padding: 9px 13px;
+  background: var(--surface-2);
+  border-radius: 12px;
+}
+
+.slotSoon {
+  background: var(--soft-sage);
+}
+
+.slotLabel {
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.slotValue {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.slotSoon .slotValue {
+  color: var(--primary-dark);
+}
+
 .cardBottom {
   display: flex;
   align-items: center;
@@ -247,6 +278,11 @@
 
   .tags {
     padding: 0 14px 12px;
+  }
+
+  .slotRow {
+    margin: 0 14px 10px;
+    padding: 8px 11px;
   }
 
   /* Цена с адресом сверху, кнопки во всю ширину снизу — так на кнопки

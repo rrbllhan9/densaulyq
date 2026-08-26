@@ -38,7 +38,8 @@ export default function SymptomChecker({ onShowDoctors }) {
         setMessages(prev => [
           ...prev,
           ...(reassurance ? [{ id: Date.now() + 1, type: 'bot', content: reassurance }] : []),
-          { id: Date.now() + 2, type: 'result', symptom },
+          // Слова человека сохраняем — из них собирается памятка для приёма.
+          { id: Date.now() + 2, type: 'result', symptom, complaint: trimmed },
         ])
       } else {
         setMessages(prev => [
@@ -74,7 +75,11 @@ export default function SymptomChecker({ onShowDoctors }) {
           >
             {msg.type !== 'user' && <div className={styles.avatar}>🌿</div>}
             {msg.type === 'result' ? (
-              <ResultCard symptom={msg.symptom} onShowDoctors={onShowDoctors} />
+              <ResultCard
+                symptom={msg.symptom}
+                complaint={msg.complaint}
+                onShowDoctors={onShowDoctors}
+              />
             ) : (
               <div className={`${styles.bubble} fade-in`} style={{ animationDelay: `${i * 0.05}s` }}>
                 {msg.content.split('\n').map((line, j) => (

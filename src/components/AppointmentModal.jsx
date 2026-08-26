@@ -1,11 +1,30 @@
 import { useState, useEffect } from 'react'
 import { createPortal } from 'react-dom'
+import { formatDay } from '../data/doctors'
+import VisitMemo from './VisitMemo'
 import styles from './AppointmentModal.module.css'
 
-export default function AppointmentModal({ doctor, mode = 'visit', onClose }) {
+// Кому записываемся. Молодые часто записывают родителей и детей —
+// им приложение нужно даже чаще, чем самому пользователю.
+const PATIENTS = [
+  { id: 'self', label: 'Себе' },
+  { id: 'parent', label: 'Родителю' },
+  { id: 'child', label: 'Ребёнку' },
+  { id: 'other', label: 'Другому' },
+]
+
+const BRING = [
+  'Удостоверение личности',
+  'Прошлые выписки и результаты анализов, если есть',
+  'Список лекарств, которые принимаете',
+]
+
+export default function AppointmentModal({ doctor, mode = 'visit', complaint, symptom, onClose }) {
   const [bookingMode, setBookingMode] = useState(mode)
+  const [dayIdx, setDayIdx] = useState(0)
   const [selectedTime, setSelectedTime] = useState(null)
   const [confirmed, setConfirmed] = useState(false)
+  const [patient, setPatient] = useState('self')
   const [name, setName] = useState('')
   const [phone, setPhone] = useState('')
 
@@ -17,10 +36,19 @@ export default function AppointmentModal({ doctor, mode = 'visit', onClose }) {
   }, [])
 
   const isOnline = bookingMode === 'online'
+  const schedule = doctor.schedule || []
+  const day = schedule[dayIdx]
+  const forSelf = patient === 'self'
+  const patientLabel = PATIENTS.find(p => p.id === patient)?.label
 
   function handleConfirm() {
     if (!selectedTime || !name.trim()) return
     setConfirmed(true)
+  }
+
+  function pickDay(i) {
+    setDayIdx(i)
+    setSelectedTime(null)
   }
 
   return createPortal(
@@ -36,26 +64,46 @@ export default function AppointmentModal({ doctor, mode = 'visit', onClose }) {
               {isOnline ? (
                 <>
                   Онлайн-консультация с <strong>{doctor.name}</strong><br />
-                  на <strong>{selectedTime}</strong>, сегодня.<br />
-                  Врач сам напишет вам в чат.
+                  {formatDay(day.dayOffset)} в <strong>{selectedTime}</strong>.<br />
+                  Врач сам напишет в чат.
                 </>
               ) : (
                 <>
-                  Вы записаны к <strong>{doctor.name}</strong><br />
-                  на <strong>{selectedTime}</strong>, сегодня.<br />
-                  Адрес: {doctor.address}
+                  {forSelf ? 'Вы записаны' : `Запись оформлена (${patientLabel.toLowerCase()})`} к{' '}
+                  <strong>{doctor.name}</strong><br />
+                  {formatDay(day.dayOffset)} в <strong>{selectedTime}</strong>.<br />
+                  {doctor.address}
                 </>
               )}
             </p>
+
+            {!isOnline && (
+              <div className={styles.bringBox}>
+                <span className={styles.blockLabel}>Что взять с собой</span>
+                <ul className={styles.bringList}>
+                  {BRING.map(item => (
+                    <li key={item} className={styles.bringItem}>{item}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
+            {complaint && symptom && (
+              <div className={styles.memoBox}>
+                <span className={styles.blockLabel}>Памятка на приём</span>
+                <VisitMemo complaint={complaint} symptom={symptom} compact />
+              </div>
+            )}
+
             <p className={styles.successNote}>
-              Напоминание придёт сюда, в приложение. Звонить не нужно.
+              Напоминание придёт сюда, в приложение, накануне визита. Звонить не нужно.
             </p>
             <button className={styles.doneBtn} onClick={onClose}>Понятно</button>
           </div>
         ) : (
           <>
             <div className={styles.noCallBanner}>
-              Без звонка — просто выберите удобное время.
+              Без звонка и без поездки в регистратуру — просто выберите время.
             </div>
 
             <div className={styles.modeToggle} data-online={isOnline}>
@@ -89,9 +137,34 @@ export default function AppointmentModal({ doctor, mode = 'visit', onClose }) {
               </p>
             )}
 
+            <h3 className={styles.sectionLabel}>Для кого запись?</h3>
+            <div className={styles.patientRow}>
+              {PATIENTS.map(p => (
+                <button
+                  key={p.id}
+                  className={`${styles.patientBtn} ${patient === p.id ? styles.patientActive : ''}`}
+                  onClick={() => setPatient(p.id)}
+                >
+                  {p.label}
+                </button>
+              ))}
+            </div>
+
             <h3 className={styles.sectionLabel}>Когда вам удобно?</h3>
+            <div className={styles.dayRow}>
+              {schedule.map((d, i) => (
+                <button
+                  key={d.dayOffset}
+                  className={`${styles.dayBtn} ${dayIdx === i ? styles.dayActive : ''}`}
+                  onClick={() => pickDay(i)}
+                >
+                  {formatDay(d.dayOffset, { short: true })}
+                </button>
+              ))}
+            </div>
+
             <div className={styles.timeGrid}>
-              {doctor.available.map(t => (
+              {day?.times.map(t => (
                 <button
                   key={t}
                   className={`${styles.timeSlot} ${selectedTime === t ? styles.selected : ''}`}
@@ -102,10 +175,12 @@ export default function AppointmentModal({ doctor, mode = 'visit', onClose }) {
               ))}
             </div>
 
-            <h3 className={styles.sectionLabel}>Как к вам обращаться?</h3>
+            <h3 className={styles.sectionLabel}>
+              {forSelf ? 'Как к вам обращаться?' : 'Имя пациента'}
+            </h3>
             <input
               className={styles.inputField}
-              placeholder="Имя"
+              placeholder={forSelf ? 'Имя' : 'Имя того, кого записываете'}
               value={name}
               onChange={e => setName(e.target.value)}
             />
@@ -116,6 +191,12 @@ export default function AppointmentModal({ doctor, mode = 'visit', onClose }) {
               onChange={e => setPhone(e.target.value)}
               type="tel"
             />
+
+            {complaint && (
+              <p className={styles.shareHint}>
+                Ваша жалоба уйдёт врачу заранее — он подготовится, и приём пройдёт быстрее.
+              </p>
+            )}
 
             <button
               className={styles.confirmBtn}

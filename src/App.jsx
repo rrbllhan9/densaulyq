@@ -6,17 +6,18 @@ import styles from './App.module.css'
 
 export default function App() {
   const [page, setPage] = useState('checker')
-  // Специальности, рекомендованные триажем — карта откроется с готовым подбором.
-  const [recommended, setRecommended] = useState(null)
+  // Контекст из чата: какие специальности подошли и что человек написал —
+  // жалоба нужна дальше для памятки на приём.
+  const [context, setContext] = useState(null)
 
-  function showDoctors(specialtyIds) {
-    setRecommended(specialtyIds?.length ? specialtyIds : null)
+  function showDoctors(ctx) {
+    setContext(ctx?.specialtyIds?.length ? ctx : null)
     setPage('map')
   }
 
   function changePage(next) {
     // Переход через меню — без фильтра, показываем всех врачей.
-    setRecommended(null)
+    setContext(null)
     setPage(next)
   }
 
@@ -29,7 +30,7 @@ export default function App() {
           {page === 'checker' ? (
             <SymptomChecker onShowDoctors={showDoctors} />
           ) : (
-            <DoctorMap recommendedSpecialties={recommended} />
+            <DoctorMap context={context} />
           )}
         </div>
       </main>

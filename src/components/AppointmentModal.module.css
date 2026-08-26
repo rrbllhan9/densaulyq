@@ -187,6 +187,127 @@
   margin-bottom: 12px;
 }
 
+/* Для кого запись — себе, родителю, ребёнку */
+.patientRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  margin-bottom: 20px;
+}
+
+.patientBtn {
+  padding: 9px 16px;
+  border: 2px solid var(--border);
+  border-radius: 999px;
+  background: var(--surface);
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--text-muted);
+  transition: border-color 0.25s, color 0.25s, background 0.25s, transform 0.2s var(--ease-back);
+}
+
+.patientBtn:hover {
+  border-color: var(--primary-light);
+  color: var(--primary-dark);
+}
+
+.patientBtn:active {
+  transform: scale(0.95);
+}
+
+.patientActive {
+  background: var(--soft-sage);
+  border-color: var(--primary-light);
+  color: var(--primary-dark);
+}
+
+/* Выбор дня приёма */
+.dayRow {
+  display: flex;
+  gap: 7px;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+}
+
+.dayBtn {
+  padding: 8px 15px;
+  border: 2px solid var(--border);
+  border-radius: 12px;
+  background: var(--surface);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-muted);
+  transition: border-color 0.25s, color 0.25s, background 0.25s;
+}
+
+.dayBtn:hover {
+  border-color: var(--primary-light);
+  color: var(--primary-dark);
+}
+
+.dayActive {
+  background: linear-gradient(135deg, var(--primary), var(--primary-light));
+  border-color: transparent;
+  color: #fff;
+  box-shadow: 0 6px 14px rgba(107, 144, 128, 0.22);
+}
+
+.shareHint {
+  font-size: 12.5px;
+  color: var(--primary-dark);
+  line-height: 1.5;
+  background: var(--soft-sage);
+  border-radius: 12px;
+  padding: 11px 14px;
+  margin-bottom: 4px;
+}
+
+/* Блоки на экране подтверждения */
+.blockLabel {
+  display: block;
+  font-size: 11.5px;
+  font-weight: 700;
+  color: var(--primary-dark);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 9px;
+}
+
+.bringBox,
+.memoBox {
+  text-align: left;
+  margin-bottom: 16px;
+  animation: fadeIn 0.5s var(--ease-soft) both;
+  animation-delay: 0.34s;
+}
+
+.bringList {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 14px 16px;
+}
+
+.bringItem {
+  font-size: 13.5px;
+  color: var(--text);
+  line-height: 1.5;
+  padding-left: 16px;
+  position: relative;
+}
+
+.bringItem::before {
+  content: '·';
+  position: absolute;
+  left: 4px;
+  color: var(--primary);
+  font-weight: 700;
+}
+
 .timeGrid {
   display: flex;
   flex-wrap: wrap;
@@ -378,6 +499,16 @@
   .timeSlot {
     padding: 10px 16px;
     font-size: 13.5px;
+  }
+
+  .patientBtn {
+    padding: 9px 13px;
+    font-size: 12.5px;
+  }
+
+  .dayBtn {
+    padding: 8px 13px;
+    font-size: 12.5px;
   }
 
   .inputField {

@@ -13,7 +13,7 @@ export const doctors = [
     lng: 76.9465,
     avatar: null,
     price: '5 000 ₸',
-    available: ['09:00', '10:30', '13:00', '15:30', '17:00'],
+    schedule: [{ dayOffset: 0, times: ['15:30', '17:00'] }, { dayOffset: 1, times: ['09:00', '10:30', '13:00'] }],
     online: true,
     tags: ['🌿 Спокойный, подробный приём', '💬 Принимает онлайн'],
     reviews: [
@@ -36,7 +36,7 @@ export const doctors = [
     lng: 76.8850,
     avatar: null,
     price: '7 000 ₸',
-    available: ['10:00', '11:30', '14:00', '16:00'],
+    schedule: [{ dayOffset: 2, times: ['10:00', '11:30'] }, { dayOffset: 3, times: ['14:00', '16:00'] }],
     online: true,
     tags: ['🤍 Не торопит, всё объясняет', '💬 Онлайн-консультация'],
     reviews: [
@@ -59,7 +59,7 @@ export const doctors = [
     lng: 76.8789,
     avatar: null,
     price: '6 500 ₸',
-    available: ['09:30', '11:00', '14:30', '16:30', '18:00'],
+    schedule: [{ dayOffset: 1, times: ['09:30', '11:00', '14:30'] }, { dayOffset: 2, times: ['16:30', '18:00'] }],
     online: true,
     tags: ['🌿 Бережный, мягкий подход', '💬 Принимает онлайн'],
     reviews: [
@@ -82,7 +82,7 @@ export const doctors = [
     lng: 76.9123,
     avatar: null,
     price: '6 000 ₸',
-    available: ['10:30', '12:00', '15:00', '17:30'],
+    schedule: [{ dayOffset: 3, times: ['10:30', '12:00'] }, { dayOffset: 4, times: ['15:00', '17:30'] }],
     online: true,
     tags: ['🤍 Внимательный и спокойный', '💬 Онлайн-консультация'],
     reviews: [
@@ -105,7 +105,7 @@ export const doctors = [
     lng: 76.9340,
     avatar: null,
     price: '5 500 ₸',
-    available: ['09:00', '10:00', '11:30', '14:00', '15:30', '17:00'],
+    schedule: [{ dayOffset: 0, times: ['17:00'] }, { dayOffset: 1, times: ['09:00', '10:00', '11:30', '14:00'] }],
     online: true,
     tags: ['🌿 Дети не боятся приёма', '💬 Принимает онлайн'],
     reviews: [
@@ -128,7 +128,7 @@ export const doctors = [
     lng: 76.9005,
     avatar: null,
     price: '8 000 ₸',
-    available: ['11:00', '13:30', '15:00', '16:30'],
+    schedule: [{ dayOffset: 5, times: ['11:00', '13:30'] }, { dayOffset: 6, times: ['15:00', '16:30'] }],
     online: true,
     tags: ['🤍 Большой опыт, без спешки', '💬 Онлайн-консультация'],
     reviews: [
@@ -151,7 +151,7 @@ export const doctors = [
     lng: 76.8724,
     avatar: null,
     price: '8 000 ₸',
-    available: ['10:00', '12:00', '14:00', '16:00', '18:00'],
+    schedule: [{ dayOffset: 1, times: ['10:00', '12:00', '14:00'] }, { dayOffset: 2, times: ['16:00', '18:00'] }],
     online: true,
     tags: ['🤍 Бережно про тревогу и панику', '💬 Онлайн-сессии'],
     reviews: [
@@ -174,7 +174,7 @@ export const doctors = [
     lng: 76.9312,
     avatar: null,
     price: '5 500 ₸',
-    available: ['09:00', '11:00', '13:30', '15:30', '17:30'],
+    schedule: [{ dayOffset: 0, times: ['13:30', '15:30', '17:30'] }, { dayOffset: 1, times: ['09:00', '11:00'] }],
     online: true,
     tags: ['🌿 Аккуратный осмотр, без боли', '💬 Принимает онлайн'],
     reviews: [
@@ -195,6 +195,39 @@ export const specialtyNames = {
   cardiologist: 'Кардиолог',
   psychotherapist: 'Психотерапевт',
   lor: 'ЛОР',
+}
+
+// Ближайшее свободное окно врача — по нему сортируется список «кто примет раньше».
+export function earliestSlot(doctor) {
+  const day = doctor.schedule?.[0]
+  if (!day || !day.times.length) return null
+  return { dayOffset: day.dayOffset, time: day.times[0] }
+}
+
+// Числовой ключ для сортировки: день и время в одном значении.
+export function slotRank(doctor) {
+  const s = earliestSlot(doctor)
+  if (!s) return Infinity
+  const [h, m] = s.time.split(':').map(Number)
+  return s.dayOffset * 1440 + h * 60 + m
+}
+
+const WEEKDAYS = ['воскресенье', 'понедельник', 'вторник', 'среду', 'четверг', 'пятницу', 'субботу']
+const MONTHS = ['января', 'февраля', 'марта', 'апреля', 'мая', 'июня', 'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря']
+
+export function dateFromOffset(dayOffset) {
+  const d = new Date()
+  d.setDate(d.getDate() + dayOffset)
+  return d
+}
+
+// «сегодня» / «завтра» / «в пятницу, 29 августа»
+export function formatDay(dayOffset, { short = false } = {}) {
+  if (dayOffset === 0) return 'сегодня'
+  if (dayOffset === 1) return 'завтра'
+  const d = dateFromOffset(dayOffset)
+  if (short) return `${d.getDate()} ${MONTHS[d.getMonth()]}`
+  return `в ${WEEKDAYS[d.getDay()]}, ${d.getDate()} ${MONTHS[d.getMonth()]}`
 }
 
 export function getDistance(lat1, lng1, lat2, lng2) {

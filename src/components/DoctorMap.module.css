@@ -35,6 +35,50 @@
   flex: 1;
 }
 
+/* Переключатель сортировки: раньше примет / ближе ко мне */
+.sortToggle {
+  display: flex;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.sortBtn {
+  padding: 8px 13px;
+  background: var(--surface);
+  color: var(--text-muted);
+  border: 1.5px solid var(--border);
+  border-radius: 999px;
+  font-size: 12.5px;
+  font-weight: 700;
+  white-space: nowrap;
+  transition: background 0.25s, color 0.25s, border-color 0.25s, transform 0.2s var(--ease-back);
+}
+
+.sortBtn:hover:not(:disabled) {
+  border-color: var(--primary-light);
+  color: var(--primary-dark);
+}
+
+.sortBtn:active:not(:disabled) {
+  transform: scale(0.96);
+}
+
+.sortBtn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.sortActive {
+  background: linear-gradient(135deg, var(--primary), var(--primary-light));
+  color: #fff;
+  border-color: transparent;
+  box-shadow: 0 5px 14px rgba(107, 144, 128, 0.25);
+}
+
+.sortActive:hover {
+  color: #fff;
+}
+
 .locateBtn {
   padding: 10px 18px;
   background: linear-gradient(135deg, var(--primary), var(--primary-light));
@@ -227,13 +271,27 @@
 }
 
 @media (max-width: 640px) {
+  /* На телефоне заголовок и переключатель встают в две строки */
   .sidebarHeader {
-    padding: 14px 14px 12px;
-    gap: 9px;
+    padding: 12px 14px;
+    gap: 8px;
+    flex-direction: column;
+    align-items: stretch;
   }
 
   .sidebarTitle {
     font-size: 17px;
+    flex: none;
+  }
+
+  .sortToggle {
+    gap: 6px;
+  }
+
+  .sortBtn {
+    flex: 1;
+    padding: 9px 8px;
+    font-size: 12px;
   }
 
   .locateBtn {
