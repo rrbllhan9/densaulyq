@@ -55,6 +55,25 @@ function FlyTo({ center }) {
   return null
 }
 
+// Leaflet запоминает размер контейнера при создании. На телефоне высота
+// меняется позже (адресная строка, поворот экрана), и карта остаётся с
+// прежними размерами — половина плиток серая. Пересчитываем размер сами.
+function KeepMapSized() {
+  const map = useMap()
+  useEffect(() => {
+    const resize = () => map.invalidateSize()
+    const timer = setTimeout(resize, 250)
+    window.addEventListener('resize', resize)
+    window.addEventListener('orientationchange', resize)
+    return () => {
+      clearTimeout(timer)
+      window.removeEventListener('resize', resize)
+      window.removeEventListener('orientationchange', resize)
+    }
+  }, [map])
+  return null
+}
+
 const ALMATY_CENTER = [43.2220, 76.8512]
 
 export default function DoctorMap({ recommendedSpecialties }) {
@@ -171,6 +190,7 @@ export default function DoctorMap({ recommendedSpecialties }) {
           className={styles.map}
           zoomControl={true}
         >
+          <KeepMapSized />
           <TileLayer
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"

@@ -56,16 +56,30 @@
   --font-body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
+/* Высота приложения фиксируется по экрану, чтобы чат и карта прокручивались
+   внутри себя, а не растягивали страницу. dvh учитывает адресную строку
+   мобильных браузеров — без него низ экрана обрезается. */
+html, body {
+  height: 100%;
+}
+
 body {
   font-family: var(--font-body);
   background: linear-gradient(160deg, var(--bg-from) 0%, var(--bg-to) 100%);
   background-attachment: fixed;
   color: var(--text);
   line-height: 1.6;
-  min-height: 100vh;
   -webkit-font-smoothing: antialiased;
   position: relative;
-  overflow-x: hidden;
+  overflow: hidden;
+}
+
+#root {
+  height: 100vh;
+  height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
 }
 
 /* Живой фон: мягкие плавающие тёплые пятна */

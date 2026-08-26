@@ -66,7 +66,12 @@ export default function SymptomChecker({ onShowDoctors }) {
     <div className={styles.wrapper}>
       <div className={styles.chat}>
         {messages.map((msg, i) => (
-          <div key={msg.id} className={`${styles.msgRow} ${msg.type === 'user' ? styles.user : styles.bot}`}>
+          <div
+            key={msg.id}
+            className={`${styles.msgRow} ${msg.type === 'user' ? styles.user : styles.bot} ${
+              msg.type === 'result' ? styles.resultRow : ''
+            }`}
+          >
             {msg.type !== 'user' && <div className={styles.avatar}>🌿</div>}
             {msg.type === 'result' ? (
               <ResultCard symptom={msg.symptom} onShowDoctors={onShowDoctors} />

@@ -210,3 +210,86 @@
   color: var(--danger);
   font-weight: 700;
 }
+
+@media (max-width: 640px) {
+  .wrapper {
+    padding: 0 12px;
+  }
+
+  .chat {
+    padding: 16px 0 10px;
+    gap: 14px;
+  }
+
+  .msgRow {
+    gap: 8px;
+  }
+
+  /* Аватар меньше — на узком экране каждый пиксель ширины нужен тексту */
+  .avatar {
+    width: 34px;
+    height: 34px;
+    border-radius: 11px;
+    font-size: 17px;
+  }
+
+  .bubble {
+    max-width: 82%;
+    padding: 12px 15px;
+    font-size: 15px;
+  }
+
+  /* Карточка результата плотная — на телефоне отдаём ей всю ширину,
+     аватар рядом с ней только отнимает место у текста */
+  .resultRow .avatar {
+    display: none;
+  }
+
+  /* Подсказки уезжают вбок, а не переносятся — экономит высоту экрана */
+  .suggestions {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    padding: 10px 0 8px;
+    gap: 7px;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .suggestions::-webkit-scrollbar {
+    display: none;
+  }
+
+  .suggestLabel {
+    display: none;
+  }
+
+  .chip {
+    padding: 9px 15px;
+    font-size: 13.5px;
+    flex-shrink: 0;
+  }
+
+  .inputRow {
+    gap: 8px;
+    padding: 6px 0 10px;
+  }
+
+  .input {
+    padding: 13px 16px;
+    /* Ровно 16px — при меньшем размере iOS автоматически зумит страницу */
+    font-size: 16px;
+    border-radius: 18px;
+  }
+
+  .sendBtn {
+    width: 48px;
+    height: 48px;
+    border-radius: 16px;
+    font-size: 19px;
+  }
+
+  .disclaimer {
+    font-size: 11.5px;
+    padding: 2px 0 12px;
+  }
+}

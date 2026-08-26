@@ -218,3 +218,61 @@
   transform: translateY(-2px);
   box-shadow: var(--shadow);
 }
+
+@media (max-width: 640px) {
+  .cardTop {
+    padding: 14px 14px 10px;
+    gap: 11px;
+  }
+
+  .avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 16px;
+    font-size: 21px;
+  }
+
+  .name {
+    font-size: 15px;
+  }
+
+  .specialty {
+    font-size: 12px;
+  }
+
+  .distance {
+    font-size: 11.5px;
+    padding: 4px 9px;
+  }
+
+  .tags {
+    padding: 0 14px 12px;
+  }
+
+  /* Цена с адресом сверху, кнопки во всю ширину снизу — так на кнопки
+     удобно попадать пальцем, а текст не сжимается в столбик */
+  .cardBottom {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 11px;
+    padding: 12px 14px;
+  }
+
+  .actions {
+    flex-direction: row;
+  }
+
+  .appointBtn,
+  .onlineBtn {
+    flex: 1;
+    padding: 12px 10px;
+    font-size: 12.5px;
+    white-space: normal;
+  }
+
+  /* Отключаем эффект наведения — на тач-экране он «залипает» после нажатия */
+  .card:hover {
+    transform: none;
+    box-shadow: var(--shadow);
+  }
+}
